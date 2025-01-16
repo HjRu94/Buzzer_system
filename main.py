@@ -1,6 +1,7 @@
 import argparse
 
 import client.client as client
+import client.gui as gui
 
 import server.server as server
 
@@ -21,6 +22,10 @@ def main():
     subparser_request.add_argument('--ip', type=str, default='101.101.1.2', help='server ip')
     subparser_request.add_argument('--port', type=int, default=12345, help='server port')
     subparser_request.set_defaults(func=client.main)
+
+    # run GUI
+    subparser_gui = subparsers.add_parser('gui', help='run GUI')
+    subparser_gui.set_defaults(func=gui.start_gui)
 
     # run function
     args = parser.parse_args()
