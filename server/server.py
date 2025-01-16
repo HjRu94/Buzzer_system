@@ -23,15 +23,21 @@ def handle_client(conn, addr):
     print(f'Client connected: {addr}')
     try:
         while True:
-            data = conn.recv(1024)  # Keep the connection open
+            data = conn.recv(1024)  # Receive data from the client
             if not data:
                 break
+            request = data.decode('utf-8').strip()
+            if request == 'GET_STATES':
+                states = {pin: 'HIGH' if GPIO.input(pin) else 'LOW' for pin in GPIO_PINS}
+                response = json.dumps(states)
+                conn.sendall(response.encode('utf-8'))
+            else:
+                conn.sendall('Invalid request'.encode('utf-8'))
     except Exception as e:
         print(f'Connection error with {addr}: {e}')
     finally:
         print(f'Client disconnected: {addr}')
         clients.remove(conn)
-
         conn.close()
 
 
