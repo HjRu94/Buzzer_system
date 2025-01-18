@@ -24,17 +24,18 @@ class Player:
         self.score = score
 
     def buzz(self):
-        if self.handicap is not None:
-            if time.time() - self.handicap_time < self.handicap:
-                return
         if self.is_buzzed():
             return
         if self.wrong:
             return
-        if self.sound is not None:
-            self.sound.play()
         self.buzzer = True
         self.buzzed_at = time.time()
+
+    def handicap_block(self):
+        if self.handicap is not None:
+            if time.time() - self.handicap_time < self.handicap:
+                return True
+        return False
 
     def unbuzz(self):
         self.buzzer = False
@@ -45,6 +46,10 @@ class Player:
 
     def set_wrong(self, wrong: bool):
         self.wrong = wrong
+
+    def play_sound(self):
+        if self.sound is not None:
+            self.sound.play()
 
     def set_sound(self, sound: SoundObject):
         self.sound = sound
@@ -76,22 +81,23 @@ class Players:
         for player in self:
             player.handicap_time = handicap_time
 
-    def who_buzzed(self) -> Union[int, None]:
+    def who_buzzed(self, timer_start) -> Union[int, None]:
         first_buzzed = None
         # set buzz time to maximum value
         buzz_time: float = float('inf')
         for i, player in enumerate(self):
-            if player.is_buzzed() and not player.wrong:
-                if first_buzzed is None:
+            if player.is_buzzed() and not player.wrong and not player.handicap_block():
+                if player.handicap is not None:
+                    player_buzz_time = max(timer_start + player.handicap, player.buzzed_at)
+                else:
+                    player_buzz_time = player.buzzed_at
+                if first_buzzed is None or player_buzz_time < buzz_time:
                     first_buzzed = i
-                    buzz_time = player.buzzed_at
-                elif player.buzzed_at < buzz_time:
-                    first_buzzed = i
-                    buzz_time = player.buzzed_at
+                    buzz_time = player_buzz_time
         return first_buzzed
 
-    def wrong_answer(self):
-        who_buzzed = self.who_buzzed()
+    def wrong_answer(self, timer_start):
+        who_buzzed = self.who_buzzed(timer_start)
         if who_buzzed is None:
             return
         self[who_buzzed].set_wrong(True)

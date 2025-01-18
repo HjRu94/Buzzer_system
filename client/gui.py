@@ -48,20 +48,20 @@ def start_gui(args):
     pygame.display.set_caption('Quiz Show Buzzer System')
 
     # Functions for button actions
-    start_time = None
+    timer_start: float = 0
     timer = False
 
     def on_timer():
         nonlocal timer
-        nonlocal start_time
+        nonlocal timer_start
         if not timer:
-            start_time = time.time()
+            timer_start = time.time()
             players.set_hadicap_time(time.time())
             timer = True
         else:
             timer = False
             players.set_hadicap_time(float('inf'))
-            start_time = None
+            timer_start = 0
 
     def on_reset():
         nonlocal timer
@@ -70,7 +70,8 @@ def start_gui(args):
         players.reset_buzzers()
 
     def on_wrong():
-        players.wrong_answer()
+        nonlocal timer_start
+        players.wrong_answer(timer_start)
 
     # Helper function to draw buttons
     def draw_button(rect, text, callback):
@@ -99,6 +100,7 @@ def start_gui(args):
 
     # Main loop
     running = True
+    previous_buzzed_player = None
     while running:
         screen.fill(WHITE)
 
@@ -125,11 +127,17 @@ def start_gui(args):
         for i in range(n_players):
             rect = buzzers_rect[i]
             buttons.append(draw_button(rect, players[i].name, players[i].buzz))
-        buzzed_player = players.who_buzzed()
+
+        buzzed_player = players.who_buzzed(timer_start)
+        if buzzed_player != previous_buzzed_player:
+            if buzzed_player is not None:
+                players[buzzed_player].sound.play()
+            previous_buzzed_player = buzzed_player
+
         if buzzed_player is not None:
             pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
 
-        timer_text = 'Start Timer' if not timer else f'{(time.time() - start_time):.2f} s'
+        timer_text = 'Start Timer' if not timer else f'{(time.time() - timer_start):.2f} s'
 
         buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
         buttons.append(draw_button(timer_rect, timer_text, on_timer))
