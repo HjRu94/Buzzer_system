@@ -1,4 +1,5 @@
 def start_gui(args):
+    from typing import List
     import client.players
     import pygame
     import sys
@@ -9,14 +10,11 @@ def start_gui(args):
     # Constants
     SCREEN_WIDTH, SCREEN_HEIGHT = 600, 400
     WHITE = (255, 255, 255)
+    RED = (255, 0, 0)
     BLACK = (0, 0, 0)
     BUTTON_COLOR = (200, 200, 200)
     FONT_COLOR = (0, 0, 0)
     FONT = pygame.font.Font(None, 36)
-
-    # Create the screen
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption('Quiz Show Buzzer System')
 
     # Initialize variables
     n_players = int(input('Enter the number of players: '))
@@ -28,6 +26,10 @@ def start_gui(args):
             player.set_handicap(int(handicap))
         else:
             player.set_handicap(None)
+
+    # Create the screen
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption('Quiz Show Buzzer System')
 
     # Functions for button actions
     def on_buzzer1():
@@ -63,6 +65,21 @@ def start_gui(args):
         screen.blit(label, label_rect)
         return rect, callback
 
+    # Define buttons:
+    buttons = []
+    buzzers_rect: List[pygame.Rect] = []
+    buzzers_rect.append(pygame.Rect(50, 50, 150, 50))
+    buzzers_rect.append(pygame.Rect(225, 50, 150, 50))
+    buzzers_rect.append(pygame.Rect(400, 50, 150, 50))
+
+    # Draw reset and timer buttons
+    reset_rect = pygame.Rect(75, 150, 200, 50)
+    timer_rect = pygame.Rect(325, 150, 200, 50)
+    # Draw scoring buttons
+    add15_rect = pygame.Rect(100, 250, 100, 50)
+    add10_rect = pygame.Rect(250, 250, 100, 50)
+    sub5_rect = pygame.Rect(400, 250, 100, 50)
+
     # Main loop
     running = True
     while running:
@@ -85,25 +102,16 @@ def start_gui(args):
 
         # Draw buzzer buttons
         buttons = []
-        buzzer1_rect = pygame.Rect(50, 50, 150, 50)
-        buzzer2_rect = pygame.Rect(225, 50, 150, 50)
-        buzzer3_rect = pygame.Rect(400, 50, 150, 50)
 
-        buttons.append(draw_button(buzzer1_rect, 'Team 1', on_buzzer1))
-        buttons.append(draw_button(buzzer2_rect, 'Team 2', on_buzzer2))
-        buttons.append(draw_button(buzzer3_rect, 'Team 3', on_buzzer3))
+        for i in range(n_players):
+            rect = buzzers_rect[i]
+            buttons.append(draw_button(rect, players[i].name, players[i].buzz))
+        buzzed_player = players.who_buzzed()
+        if buzzed_player is not None:
+            pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
 
-        # Draw reset and timer buttons
-        reset_rect = pygame.Rect(75, 150, 200, 50)
-        timer_rect = pygame.Rect(325, 150, 200, 50)
-
-        buttons.append(draw_button(reset_rect, 'Reset Buttons', on_reset))
+        buttons.append(draw_button(reset_rect, 'Reset Buzzers', players.reset_buzzers))
         buttons.append(draw_button(timer_rect, 'Start Timer', on_timer))
-
-        # Draw scoring buttons
-        add15_rect = pygame.Rect(100, 250, 100, 50)
-        add10_rect = pygame.Rect(250, 250, 100, 50)
-        sub5_rect = pygame.Rect(400, 250, 100, 50)
 
         buttons.append(draw_button(add15_rect, '+15', on_add15))
         buttons.append(draw_button(add10_rect, '+10', on_add10))
