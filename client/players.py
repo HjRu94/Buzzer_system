@@ -9,6 +9,7 @@ class Player:
         self.name: str = name
         self.score: int = score
         self.handicap: Union[int, None] = handicap
+        self.handicap_time: float = float('inf')
         self.buzzer: bool = False
         self.buzzed_at: float = float('inf')
 
@@ -19,6 +20,9 @@ class Player:
         self.score = score
 
     def buzz(self):
+        if self.handicap is not None:
+            if time.time() - self.handicap_time < self.handicap:
+                return 0
         if self.is_buzzed():
             return 0
         self.buzzer = True
@@ -52,6 +56,10 @@ class Players:
     def reset_buzzers(self):
         for player in self:
             player.unbuzz()
+
+    def set_hadicap_time(self, handicap_time):
+        for player in self:
+            player.handicap_time = handicap_time
 
     def who_buzzed(self) -> Union[int, None]:
         first_buzzed = None

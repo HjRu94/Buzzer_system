@@ -3,6 +3,7 @@ def start_gui(args):
     import client.players
     import pygame
     import sys
+    import time
 
     # Initialize Pygame
     pygame.init()
@@ -32,20 +33,26 @@ def start_gui(args):
     pygame.display.set_caption('Quiz Show Buzzer System')
 
     # Functions for button actions
-    def on_buzzer1():
-        pass
-
-    def on_buzzer2():
-        pass
-
-    def on_buzzer3():
-        pass
-
-    def on_reset():
-        pass
+    start_time = None
+    timer = False
 
     def on_timer():
-        pass
+        nonlocal timer
+        nonlocal start_time
+        if not timer:
+            start_time = time.time()
+            players.set_hadicap_time(time.time())
+            timer = True
+        else:
+            timer = False
+            players.set_hadicap_time(float('inf'))
+            start_time = None
+
+    def on_reset():
+        nonlocal timer
+        if timer:
+            on_timer()
+        players.reset_buzzers()
 
     def on_add15():
         pass
@@ -110,8 +117,11 @@ def start_gui(args):
         if buzzed_player is not None:
             pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
 
-        buttons.append(draw_button(reset_rect, 'Reset Buzzers', players.reset_buzzers))
-        buttons.append(draw_button(timer_rect, 'Start Timer', on_timer))
+
+        timer_text = 'Start Timer' if not timer else str(int(time.time() - start_time))
+
+        buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
+        buttons.append(draw_button(timer_rect, timer_text, on_timer))
 
         buttons.append(draw_button(add15_rect, '+15', on_add15))
         buttons.append(draw_button(add10_rect, '+10', on_add10))
