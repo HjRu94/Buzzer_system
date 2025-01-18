@@ -1,6 +1,8 @@
 import time
 from typing import List, Union
 
+from client.sound import SoundObject
+
 
 class Player:
     """object representing a player."""
@@ -12,6 +14,7 @@ class Player:
         self.handicap_time: float = float('inf')
         self.buzzer: bool = False
         self.buzzed_at: float = float('inf')
+        self.sound: Union[SoundObject, None] = None
 
     def set_name(self, name):
         self.name = name
@@ -25,6 +28,8 @@ class Player:
                 return 0
         if self.is_buzzed():
             return 0
+        if self.sound is not None:
+            self.sound.play()
         self.buzzer = True
         self.buzzed_at = time.time()
 
@@ -34,6 +39,9 @@ class Player:
 
     def is_buzzed(self):
         return self.buzzer
+
+    def set_sound(self, sound: SoundObject):
+        self.sound = sound
 
     def set_handicap(self, handicap: Union[int, None]):
         """Set the handicap of the player messured in seconds."""

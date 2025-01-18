@@ -1,6 +1,8 @@
 def start_gui(args):
+    import os
     from typing import List
     import client.players
+    import client.sound
     import pygame
     import sys
     import time
@@ -28,6 +30,18 @@ def start_gui(args):
             player.set_handicap(int(handicap))
         else:
             player.set_handicap(None)
+        # set the buzzer sound
+        # list all files in the buzzer_sounds directory
+        buzzer_sounds = os.listdir('buzzer_sounds')
+        print('Choose a buzzer sound for player', i + 1)
+        for j, sound in enumerate(buzzer_sounds):
+            print(j + 1, sound)
+        sound_index = input('Enter the index of the sound you want to use: ')
+        try:
+            sound_index = int(sound_index)
+            player.set_sound(client.sound.SoundObject(f'buzzer_sounds/{buzzer_sounds[sound_index - 1]}'))
+        except ValueError:
+            print('Using no sound')
 
     # Create the screen
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -70,6 +84,7 @@ def start_gui(args):
     # Define evenly spaced buttons based on the number of players:
     margin = 50
     button_margin = 10
+
     button_width = (SCREEN_WIDTH - 2 * margin - (n_players - 1) * button_margin) // n_players
     for i in range(n_players):
         buzzers_rect.append(pygame.Rect(margin + i * (button_width + button_margin), 50, button_width, 50))
@@ -108,8 +123,7 @@ def start_gui(args):
         if buzzed_player is not None:
             pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
 
-
-        timer_text = 'Start Timer' if not timer else f"{(time.time() - start_time):.2f} s"
+        timer_text = 'Start Timer' if not timer else f'{(time.time() - start_time):.2f} s'
 
         buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
         buttons.append(draw_button(timer_rect, timer_text, on_timer))
