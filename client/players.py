@@ -15,6 +15,7 @@ class Player:
         self.buzzer: bool = False
         self.buzzed_at: float = float('inf')
         self.sound: Union[SoundObject, None] = None
+        self.wrong = False
 
     def set_name(self, name):
         self.name = name
@@ -25,9 +26,11 @@ class Player:
     def buzz(self):
         if self.handicap is not None:
             if time.time() - self.handicap_time < self.handicap:
-                return 0
+                return
         if self.is_buzzed():
-            return 0
+            return
+        if self.wrong:
+            return
         if self.sound is not None:
             self.sound.play()
         self.buzzer = True
@@ -39,6 +42,9 @@ class Player:
 
     def is_buzzed(self):
         return self.buzzer
+
+    def set_wrong(self, wrong: bool):
+        self.wrong = wrong
 
     def set_sound(self, sound: SoundObject):
         self.sound = sound
@@ -64,6 +70,7 @@ class Players:
     def reset_buzzers(self):
         for player in self:
             player.unbuzz()
+            player.set_wrong(False)
 
     def set_hadicap_time(self, handicap_time):
         for player in self:
@@ -74,7 +81,7 @@ class Players:
         # set buzz time to maximum value
         buzz_time: float = float('inf')
         for i, player in enumerate(self):
-            if player.is_buzzed():
+            if player.is_buzzed() and not player.wrong:
                 if first_buzzed is None:
                     first_buzzed = i
                     buzz_time = player.buzzed_at
@@ -82,6 +89,12 @@ class Players:
                     first_buzzed = i
                     buzz_time = player.buzzed_at
         return first_buzzed
+
+    def wrong_answer(self):
+        who_buzzed = self.who_buzzed()
+        if who_buzzed is None:
+            return
+        self[who_buzzed].set_wrong(True)
 
     def __getitem__(self, idx):
         return self.players[idx]

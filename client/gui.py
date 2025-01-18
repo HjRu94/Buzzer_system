@@ -69,6 +69,9 @@ def start_gui(args):
             on_timer()
         players.reset_buzzers()
 
+    def on_wrong():
+        players.wrong_answer()
+
     # Helper function to draw buttons
     def draw_button(rect, text, callback):
         pygame.draw.rect(screen, BUTTON_COLOR, rect)
@@ -90,8 +93,9 @@ def start_gui(args):
         buzzers_rect.append(pygame.Rect(margin + i * (button_width + button_margin), 50, button_width, 50))
 
     # Draw reset and timer buttons
-    reset_rect = pygame.Rect(75, 150, 200, 50)
-    timer_rect = pygame.Rect(325, 150, 200, 50)
+    reset_rect = pygame.Rect(50, 150, 150, 50)
+    timer_rect = pygame.Rect(225, 150, 150, 50)
+    wrong_rect = pygame.Rect(400, 150, 150, 50)
 
     # Main loop
     running = True
@@ -102,11 +106,13 @@ def start_gui(args):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = event.pos
                 for rect, callback in buttons:
                     if rect.collidepoint(pos):
                         callback()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     on_reset()
@@ -127,6 +133,7 @@ def start_gui(args):
 
         buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
         buttons.append(draw_button(timer_rect, timer_text, on_timer))
+        buttons.append(draw_button(wrong_rect, 'Wrong Answer', on_wrong))
 
         # Update the screen
         pygame.display.flip()
