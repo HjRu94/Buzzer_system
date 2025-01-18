@@ -1,4 +1,5 @@
 def start_gui(args):
+    import client.players
     import pygame
     import sys
 
@@ -16,6 +17,17 @@ def start_gui(args):
     # Create the screen
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Quiz Show Buzzer System')
+
+    # Initialize variables
+    n_players = int(input('Enter the number of players: '))
+    players = client.players.Players(n_players)
+    for i, player in enumerate(players):
+        player.set_name(input(f'Enter the name of player {i + 1}: '))
+        handicap = input(f'Enter the handicap of player {i + 1} in seconds: ')
+        if handicap != '':
+            player.set_handicap(int(handicap))
+        else:
+            player.set_handicap(None)
 
     # Functions for button actions
     def on_buzzer1():
