@@ -129,6 +129,8 @@ def start_gui(args):
                     on_reset()
                 elif event.key == pygame.K_t:
                     on_timer()
+                elif event.key == pygame.K_y:
+                    on_wrong()
         # None pygame event handling
         buzzer_info = client.client.get_gpio_states(ip, port)
         print(buzzer_info)
