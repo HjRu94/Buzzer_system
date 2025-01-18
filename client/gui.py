@@ -3,9 +3,13 @@ def start_gui(args):
     from typing import List
     import client.players
     import client.sound
+    import client.client
     import pygame
     import sys
     import time
+    
+    ip = args.ip
+    port = args.port
 
     # Initialize Pygame
     pygame.init()
@@ -42,6 +46,11 @@ def start_gui(args):
             player.set_sound(client.sound.SoundObject(f'buzzer_sounds/{buzzer_sounds[sound_index - 1]}'))
         except ValueError:
             print('Using no sound')
+        gpio_pin = input(f'Enter the GPIO pin of player {i + 1}: ')
+        try:
+            player.gpio_pin = int(gpio_pin)
+        except ValueError:
+            print('Using no GPIO pin')
 
     # Create the screen
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -120,6 +129,15 @@ def start_gui(args):
                     on_reset()
                 elif event.key == pygame.K_t:
                     on_timer()
+        # None pygame event handling
+        buzzer_info = client.client.get_gpio_states(ip, port)
+        print(buzzer_info)
+
+        if buzzer_info is not None:
+            buzzer_info = [1 if buzzer_info[str(player.gpio_pin)] == 'HIGH' else 0 for player in players]
+            for i, buzzer in enumerate(buzzer_info):
+                if buzzer:
+                    players[i].buzz()
 
         # Draw buzzer buttons
         buttons = []

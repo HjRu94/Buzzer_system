@@ -25,6 +25,8 @@ def main():
 
     # run GUI
     subparser_gui = subparsers.add_parser('gui', help='run GUI')
+    subparser_gui.add_argument('--ip', type=str, default='101.101.1.2', help='server ip')
+    subparser_gui.add_argument('--port', type=int, default=12345, help='server port')
     subparser_gui.set_defaults(func=gui.start_gui)
 
     # run function

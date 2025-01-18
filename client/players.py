@@ -16,6 +16,7 @@ class Player:
         self.buzzed_at: float = float('inf')
         self.sound: Union[SoundObject, None] = None
         self.wrong = False
+        self.gpio_pin = None
 
     def set_name(self, name):
         self.name = name
