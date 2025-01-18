@@ -9,13 +9,14 @@ def start_gui(args):
     pygame.init()
 
     # Constants
-    SCREEN_WIDTH, SCREEN_HEIGHT = 600, 400
+    SCREEN_WIDTH, SCREEN_HEIGHT = 600, 250
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
     BUTTON_COLOR = (200, 200, 200)
     FONT_COLOR = (0, 0, 0)
-    FONT = pygame.font.Font(None, 36)
+    # choose a font where all the characters have the same width
+    FONT = pygame.font.Font(pygame.font.match_font('courier'), 20)
 
     # Initialize variables
     n_players = int(input('Enter the number of players: '))
@@ -54,15 +55,6 @@ def start_gui(args):
             on_timer()
         players.reset_buzzers()
 
-    def on_add15():
-        pass
-
-    def on_add10():
-        pass
-
-    def on_sub5():
-        pass
-
     # Helper function to draw buttons
     def draw_button(rect, text, callback):
         pygame.draw.rect(screen, BUTTON_COLOR, rect)
@@ -75,17 +67,16 @@ def start_gui(args):
     # Define buttons:
     buttons = []
     buzzers_rect: List[pygame.Rect] = []
-    buzzers_rect.append(pygame.Rect(50, 50, 150, 50))
-    buzzers_rect.append(pygame.Rect(225, 50, 150, 50))
-    buzzers_rect.append(pygame.Rect(400, 50, 150, 50))
+    # Define evenly spaced buttons based on the number of players:
+    margin = 50
+    button_margin = 10
+    button_width = (SCREEN_WIDTH - 2 * margin - (n_players - 1) * button_margin) // n_players
+    for i in range(n_players):
+        buzzers_rect.append(pygame.Rect(margin + i * (button_width + button_margin), 50, button_width, 50))
 
     # Draw reset and timer buttons
     reset_rect = pygame.Rect(75, 150, 200, 50)
     timer_rect = pygame.Rect(325, 150, 200, 50)
-    # Draw scoring buttons
-    add15_rect = pygame.Rect(100, 250, 100, 50)
-    add10_rect = pygame.Rect(250, 250, 100, 50)
-    sub5_rect = pygame.Rect(400, 250, 100, 50)
 
     # Main loop
     running = True
@@ -118,14 +109,10 @@ def start_gui(args):
             pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
 
 
-        timer_text = 'Start Timer' if not timer else str(int(time.time() - start_time))
+        timer_text = 'Start Timer' if not timer else f"{(time.time() - start_time):.2f} s"
 
         buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
         buttons.append(draw_button(timer_rect, timer_text, on_timer))
-
-        buttons.append(draw_button(add15_rect, '+15', on_add15))
-        buttons.append(draw_button(add10_rect, '+10', on_add10))
-        buttons.append(draw_button(sub5_rect, '-5', on_sub5))
 
         # Update the screen
         pygame.display.flip()
