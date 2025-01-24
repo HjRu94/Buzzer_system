@@ -132,14 +132,15 @@ def start_gui(args):
                 elif event.key == pygame.K_y:
                     on_wrong()
         # None pygame event handling
-        buzzer_info = client.client.get_gpio_states(ip, port)
-        print(buzzer_info)
+        if args.physical_buzzers:
+            buzzer_info = client.client.get_gpio_states(ip, port)
+            print(buzzer_info)
 
-        if buzzer_info is not None:
-            buzzer_info = [1 if buzzer_info[str(player.gpio_pin)] == 'HIGH' else 0 for player in players]
-            for i, buzzer in enumerate(buzzer_info):
-                if buzzer:
-                    players[i].buzz()
+            if buzzer_info is not None:
+                buzzer_info = [1 if buzzer_info[str(player.gpio_pin)] == 'HIGH' else 0 for player in players]
+                for i, buzzer in enumerate(buzzer_info):
+                    if buzzer:
+                        players[i].buzz()
 
         # Draw buzzer buttons
         buttons = []

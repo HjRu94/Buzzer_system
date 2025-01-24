@@ -115,6 +115,10 @@ This project is a simple quiz-show buzzer system that uses a Raspberry Pi (RPi) 
    ```
 4. Start the GUI by running:
    ```bash
+   python3 main.py gui --physical_buzzers
+   ```
+   or alternatively if you are running the program without running the server.
+   ```bash
    python3 main.py gui
    ```
 
