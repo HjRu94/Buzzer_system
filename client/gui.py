@@ -170,6 +170,13 @@ def start_gui(args):
                     on_timer()
                 elif event.key == pygame.K_y:
                     on_wrong()
+                elif event.key == pygame.K_f:
+                    on_add()
+                elif event.key == pygame.K_g:
+                    on_sub()
+                for i in range(n_players):  # Iterate over player indices (1, 2, 3)
+                    if event.key == getattr(pygame, f"K_{i + 1}") and n_players >= i:
+                        players[i].buzz()
         # None pygame event handling
         if args.physical_buzzers:
             buzzer_info = connector.get_gpio_states()
