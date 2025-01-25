@@ -7,7 +7,7 @@ def start_gui(args):
     import pygame
     import sys
     import time
-    
+
     ip = args.ip
     port = args.port
 
@@ -15,7 +15,7 @@ def start_gui(args):
     pygame.init()
 
     # Constants
-    SCREEN_WIDTH, SCREEN_HEIGHT = 600, 350
+    SCREEN_WIDTH, SCREEN_HEIGHT = 1100, 500
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
@@ -110,21 +110,21 @@ def start_gui(args):
     buzzers_rect: List[pygame.Rect] = []
     # Define evenly spaced buttons based on the number of players:
     margin = 50
-    button_margin = 10
+    button_margin = 20
 
     button_width = (SCREEN_WIDTH - 2 * margin - (n_players - 1) * button_margin) // n_players
     for i in range(n_players):
-        buzzers_rect.append(pygame.Rect(margin + i * (button_width + button_margin), 50, button_width, 50))
+        buzzers_rect.append(pygame.Rect(margin + i * (button_width + button_margin), 50, button_width, 100))
 
     # Draw reset and timer buttons
-    reset_rect = pygame.Rect(50, 150, 150, 50)
-    timer_rect = pygame.Rect(225, 150, 150, 50)
-    wrong_rect = pygame.Rect(400, 150, 150, 50)
+    reset_rect = pygame.Rect(50, 200, 300, 100)
+    timer_rect = pygame.Rect(400, 200, 300, 100)
+    wrong_rect = pygame.Rect(750, 200, 300, 100)
 
     # Draw app and subtrackt buttons
 
-    add_rect = pygame.Rect(50, 250, 225, 50)
-    sub_rect = pygame.Rect(300, 250, 225, 50)
+    add_rect = pygame.Rect(50, 350, 475, 100)
+    sub_rect = pygame.Rect(575, 350, 475, 100)
     # Main loop
     running = True
     previous_buzzed_player = None
@@ -164,7 +164,7 @@ def start_gui(args):
 
         for i in range(n_players):
             rect = buzzers_rect[i]
-            buttons.append(draw_button(rect, players[i].name, players[i].buzz))
+            buttons.append(draw_button(rect, str(players[i]), players[i].buzz))
 
         buzzed_player = players.who_buzzed(timer_start)
         if buzzed_player != previous_buzzed_player:

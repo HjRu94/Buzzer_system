@@ -66,6 +66,9 @@ class Player:
         """Set the handicap of the player messured in seconds."""
         self.handicap = handicap
 
+    def __str__(self):
+        return f'{self.name}: {self.score}'
+
 
 class Players:
     """object representing multiple players."""
