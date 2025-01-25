@@ -105,6 +105,27 @@ def start_gui(args):
         screen.blit(label, label_rect)
         return rect, callback
 
+    # Helper function to draw an X
+    def draw_x(surface, rect, color=(255, 255, 255), width=1):
+        """
+        Draws an X of lines connecting the corners of the given rect on the surface.
+
+        Args:
+            surface (pygame.Surface): The surface to draw on.
+            rect (pygame.Rect): The rectangle whose corners will be connected.
+            color (tuple): The color of the lines (default is white).
+            width (int): The width of the lines (default is 1).
+        """
+        # Coordinates for the corners of the rect
+        top_left = (rect.left, rect.top + 2)
+        top_right = (rect.right - 1, rect.top + 2)
+        bottom_left = (rect.left, rect.bottom - 3)
+        bottom_right = (rect.right - 1, rect.bottom - 3)
+
+        # Draw lines connecting the corners
+        pygame.draw.line(surface, color, top_left, bottom_right, width)
+        pygame.draw.line(surface, color, top_right, bottom_left, width)
+
     # Define buttons:
     buttons = []
     buzzers_rect: List[pygame.Rect] = []
@@ -175,6 +196,12 @@ def start_gui(args):
 
         if buzzed_player is not None:
             pygame.draw.rect(screen, RED, buzzers_rect[buzzed_player], 5)
+
+        # Draw X
+
+        for i, player in enumerate(players):
+            if player.wrong:
+                draw_x(screen, buzzers_rect[i], color=RED, width=5)
 
         timer_text = 'Start Timer' if not timer else f'{(time.time() - timer_start):.2f} s'
 
