@@ -169,7 +169,8 @@ def start_gui(args):
         buzzed_player = players.who_buzzed(timer_start)
         if buzzed_player != previous_buzzed_player:
             if buzzed_player is not None:
-                players[buzzed_player].sound.play()
+                if players[buzzed_player].sound is not None:
+                    players[buzzed_player].sound.play()
             previous_buzzed_player = buzzed_player
 
         if buzzed_player is not None:
