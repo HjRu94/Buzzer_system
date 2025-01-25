@@ -15,7 +15,7 @@ def start_gui(args):
     pygame.init()
 
     # Constants
-    SCREEN_WIDTH, SCREEN_HEIGHT = 600, 250
+    SCREEN_WIDTH, SCREEN_HEIGHT = 600, 350
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
@@ -84,6 +84,18 @@ def start_gui(args):
         nonlocal timer_start
         players.wrong_answer(timer_start)
 
+    buzzed_player = None
+
+    def on_add():
+        nonlocal buzzed_player
+        if buzzed_player is not None:
+            players[buzzed_player].add_to_score()
+
+    def on_sub():
+        nonlocal buzzed_player
+        if buzzed_player is not None:
+            players[buzzed_player].sub_to_score()
+
     # Helper function to draw buttons
     def draw_button(rect, text, callback):
         pygame.draw.rect(screen, BUTTON_COLOR, rect)
@@ -109,6 +121,10 @@ def start_gui(args):
     timer_rect = pygame.Rect(225, 150, 150, 50)
     wrong_rect = pygame.Rect(400, 150, 150, 50)
 
+    # Draw app and subtrackt buttons
+
+    add_rect = pygame.Rect(50, 250, 225, 50)
+    sub_rect = pygame.Rect(300, 250, 225, 50)
     # Main loop
     running = True
     previous_buzzed_player = None
@@ -164,6 +180,9 @@ def start_gui(args):
         buttons.append(draw_button(reset_rect, 'Reset Buzzers', on_reset))
         buttons.append(draw_button(timer_rect, timer_text, on_timer))
         buttons.append(draw_button(wrong_rect, 'Wrong Answer', on_wrong))
+
+        buttons.append(draw_button(add_rect, '+1', on_add))
+        buttons.append(draw_button(sub_rect, '-1', on_sub))
 
         # Update the screen
         pygame.display.flip()

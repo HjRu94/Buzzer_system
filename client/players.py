@@ -17,6 +17,7 @@ class Player:
         self.sound: Union[SoundObject, None] = None
         self.wrong = False
         self.gpio_pin = None
+        self.score = 0
 
     def set_name(self, name):
         self.name = name
@@ -55,12 +56,15 @@ class Player:
     def set_sound(self, sound: SoundObject):
         self.sound = sound
 
+    def add_to_score(self):
+        self.score += 1
+
+    def sub_to_score(self):
+        self.score -= 1
+
     def set_handicap(self, handicap: Union[int, None]):
         """Set the handicap of the player messured in seconds."""
         self.handicap = handicap
-
-    def add_to_score(self, points):
-        self.score += points
 
 
 class Players:
