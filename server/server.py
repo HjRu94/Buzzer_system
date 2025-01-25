@@ -20,15 +20,6 @@ def main(args):
             clients.remove(conn)
             conn.close()
 
-    # Function to broadcast messages to all clients
-    def broadcast(data):
-        message = json.dumps(data)
-        for conn in clients:
-            try:
-                conn.sendall(message.encode('utf-8'))
-            except Exception as e:
-                print(f'Failed to send message to a client: {e}')
-
     # Start the server in a separate thread
     def start_server():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
@@ -41,26 +32,10 @@ def main(args):
                 clients.append(conn)
                 threading.Thread(target=handle_client, args=(conn, addr)).start()
 
-    # GPIO monitoring function
-    def monitor_gpio():
-        print('Monitoring GPIO pins for state changes...')
-        last_states = {pin: GPIO.input(pin) for pin in GPIO_PINS}
-
-        while True:
-            for pin in GPIO_PINS:
-                current_state = GPIO.input(pin)
-                if current_state != last_states[pin]:
-                    message = {'pin': pin, 'state': current_state}
-                    print(message)
-                    broadcast(message)  # Broadcast the state change to clients
-                    last_states[pin] = current_state
-            time.sleep(0.01)  # Poll every 100ms
-
     # Main function
     import json
     import socket
     import threading
-    import time
 
     import RPi.GPIO as GPIO
 
@@ -78,8 +53,7 @@ def main(args):
     clients = []
     try:
         # Start server
-        threading.Thread(target=start_server, daemon=True).start()
-        monitor_gpio()  # Monitor GPIO
+        start_server()
     except KeyboardInterrupt:
         print('\nExiting gracefully. Cleaning up GPIO...')
         GPIO.cleanup()

@@ -51,6 +51,8 @@ def start_gui(args):
             player.gpio_pin = int(gpio_pin)
         except ValueError:
             print('Using no GPIO pin')
+    if args.physical_buzzers:
+        connector = client.client.ConnectionObject(ip, port)
 
     # Create the screen
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -133,7 +135,7 @@ def start_gui(args):
                     on_wrong()
         # None pygame event handling
         if args.physical_buzzers:
-            buzzer_info = client.client.get_gpio_states(ip, port)
+            buzzer_info = connector.get_gpio_states()
             print(buzzer_info)
 
             if buzzer_info is not None:
