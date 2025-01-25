@@ -44,7 +44,7 @@ def main(args):
     GPIO.setwarnings(False)
     GPIO_PINS = [17, 27, 22]
     for pin in GPIO_PINS:
-        GPIO.setup(pin, GPIO.IN)
+        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     # Server setup
     HOST = '0.0.0.0'  # Listen on all interfaces

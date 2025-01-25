@@ -136,7 +136,6 @@ def start_gui(args):
         # None pygame event handling
         if args.physical_buzzers:
             buzzer_info = connector.get_gpio_states()
-            print(buzzer_info)
 
             if buzzer_info is not None:
                 buzzer_info = [1 if buzzer_info[str(player.gpio_pin)] == 'HIGH' else 0 for player in players]
